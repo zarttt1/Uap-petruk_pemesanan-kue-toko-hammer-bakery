@@ -1,0 +1,219 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+class Item {
+public:
+    string nama;
+    double harga;
+    int ukuran; // 1 = kecil, 2 = sedang, 3 = besar
+
+    Item(string nama, double harga, int ukuran) {
+        this->nama = nama;
+        this->harga = harga;
+        this->ukuran = ukuran;
+    }
+};
+
+class Cake : public Item {
+public:
+    string requestNama;
+
+    Cake(string nama, double harga, int ukuran) : Item(nama, harga, ukuran) {}
+};
+
+class Kue : public Item {
+public:
+    string rasa;
+
+    Kue(string nama, double harga, int ukuran, string rasa = "") : Item(nama, harga, ukuran) {
+        this->rasa = rasa;
+    }
+};
+
+class Roti : public Item {
+public:
+    string isian;
+
+    Roti(string nama, double harga, int ukuran, string isian = "") : Item(nama, harga, ukuran) {
+        this->isian = isian;
+    }
+};
+
+int main() {
+    vector<Roti> roti = {
+        Roti("Roti Kecil", 5000, 1),
+        Roti("Roti Besar", 8000, 2),
+    };
+
+    vector<Kue> kueBolu = {
+        Kue("Kue Bolu Kecil", 25000, 1),
+        Kue("Kue Bolu Sedang", 40000, 2),
+        Kue("Kue Bolu Besar", 50000, 3),
+    };
+
+    vector<Cake> birthdayCake = {
+        Cake("Birthday Cake Blackforest", 120000, 1),
+        Cake("Birthday Cake Blackforest", 200000, 2),
+        Cake("Birthday Cake Blackforest", 270000, 3),
+        Cake("Birthday Cake Vanilla", 120000, 1),
+        Cake("Birthday Cake Vanilla", 200000, 2),
+        Cake("Birthday Cake Vanilla", 270000, 3),
+    };
+
+    vector<Roti> pesananRoti;
+    vector<Kue> pesananKueBolu;
+    vector<Cake> pesananCake;
+
+    cout << "Selamat datang di Hammer Bakery!" << endl;
+
+    while (true) {
+        int kategori;
+        cout << "Pilih kategori:\n1. Roti\n2. Kue Bolu\n3. Birthday Cake\nPilihan: ";
+        cin >> kategori;
+
+        if (kategori == 1) {
+            cout << "Silakan pilih ukuran roti yang Anda inginkan: " << endl;
+            for (int i = 0; i < roti.size(); i++) {
+                cout << (i + 1) << ". " << roti[i].nama << " - " << roti[i].harga << endl;
+            }
+
+            int pilihan;
+            cin >> pilihan;
+            Roti rotiPilihan = roti[pilihan - 1];
+
+            cout << "Silakan pilih isian roti: " << endl;
+            cout << "1. Coklat\n2. Vanilla\n3. Pisang Coklat\nPilihan: ";
+            int isian;
+            cin >> isian;
+            if (isian == 1) {
+                rotiPilihan.isian = "Coklat";
+            } else if (isian == 2) {
+                rotiPilihan.isian = "Vanilla";
+            } else if (isian == 3) {
+                rotiPilihan.isian = "Pisang Coklat";
+            } else {
+                cout << "Pilihan tidak valid." << endl;
+                continue;
+            }
+
+            pesananRoti.push_back(rotiPilihan);
+        } else if (kategori == 2) {
+            cout << "Silakan pilih ukuran kue bolu yang Anda inginkan: " << endl;
+            for (int i = 0; i < kueBolu.size(); i++) {
+                cout << (i + 1) << ". " << kueBolu[i].nama << " - " << kueBolu[i].harga << endl;
+            }
+
+            int pilihan;
+            cin >> pilihan;
+            Kue kueBoluPilihan = kueBolu[pilihan - 1];
+
+            cout << "Silakan pilih rasa kue bolu: " << endl;
+            cout << "1. Coklat\n2. Surabaya\n3. Pisang\nPilihan: ";
+            int rasa;
+            cin >> rasa;
+            if (rasa == 1) {
+                kueBoluPilihan.rasa = "Coklat";
+            } else if (rasa == 2) {
+                kueBoluPilihan.rasa = "Surabaya";
+            } else if (rasa == 3) {
+                kueBoluPilihan.rasa = "Pisang";
+            } else {
+                cout << "Pilihan tidak valid." << endl;
+                continue;
+            }
+
+            pesananKueBolu.push_back(kueBoluPilihan);
+        } else if (kategori == 3) {
+            cout << "Silakan pilih birthday cake yang Anda inginkan: " << endl;
+            for (int i = 0; i < birthdayCake.size(); i++) {
+                cout << (i + 1) << ". " << birthdayCake[i].nama << " - " << birthdayCake[i].harga << " (Ukuran: ";
+                if (birthdayCake[i].ukuran == 1) {
+                    cout << "Kecil";
+                } else if (birthdayCake[i].ukuran == 2) {
+                    cout << "Sedang";
+                } else {
+                    cout << "Besar";
+                }
+                cout << ")" << endl;
+            }
+
+            int pilihan;
+            cin >> pilihan;
+            Cake cakePilihan = birthdayCake[pilihan - 1];
+
+            cout << "Masukkan nama yang ingin ditulis di atas cake: ";
+            cin.ignore(); // Mengabaikan karakter newline yang tersisa
+            getline(cin, cakePilihan.requestNama);
+
+            pesananCake.push_back(cakePilihan);
+        } else {
+            cout << "Pilihan tidak valid." << endl;
+            continue;
+        }
+
+        char lagi;
+        cout << "Ingin memesan lagi? (y/n): ";
+        cin >> lagi;
+        if (lagi == 'n') {
+            break;
+        }
+    }
+
+    double totalHarga = 0;
+
+    if (!pesananRoti.empty()) {
+        cout << "Rincian Pembelian Roti:" << endl;
+        for (int i = 0; i < pesananRoti.size(); i++) {
+            totalHarga += pesananRoti[i].harga;
+            cout << (i + 1) << ". " << pesananRoti[i].nama << " (Isian: " << pesananRoti[i].isian << ") - Harga: " << pesananRoti[i].harga << endl;
+        }
+    }
+
+    if (!pesananKueBolu.empty()) {
+        cout << "Rincian Pembelian Kue Bolu:" << endl;
+        for (int i = 0; i < pesananKueBolu.size(); i++) {
+            totalHarga += pesananKueBolu[i].harga;
+            cout << (i + 1) << ". " << pesananKueBolu[i].nama << " (Rasa: " << pesananKueBolu[i].rasa << ") - Ukuran: ";
+            if (pesananKueBolu[i].ukuran == 1) {
+                cout << "Kecil";
+            } else if (pesananKueBolu[i].ukuran == 2) {
+                cout << "Sedang";
+            } else {
+                cout << "Besar";
+            }
+            cout << " - Harga: " << pesananKueBolu[i].harga << endl;
+        }
+    }
+
+    if (!pesananCake.empty()) {
+        cout << "Rincian Pembelian Cake:" << endl;
+        for (int i = 0; i < pesananCake.size(); i++) {
+            totalHarga += pesananCake[i].harga;
+            cout << (i + 1) << ". " << pesananCake[i].nama << " - Ukuran: ";
+            if (pesananCake[i].ukuran == 1) {
+                cout << "Kecil";
+            } else if (pesananCake[i].ukuran == 2) {
+                cout << "Sedang";
+            } else {
+                cout << "Besar";
+            }
+            cout << ", Nama di atas cake: " << pesananCake[i].requestNama << " - Harga: " << pesananCake[i].harga << endl;
+        }
+    }
+
+    cout << "Total Harga: " << totalHarga << endl;
+
+    char konfirmasi;
+    cout << "Konfirmasi Pembelian? (y/n): ";
+    cin >> konfirmasi;
+    if (konfirmasi == 'y') {
+        cout << "Pesanan Anda telah dikonfirmasi." << endl;
+    } else {
+        cout << "Pesanan dibatalkan." << endl;
+    }
+
+    return 0;
+}
