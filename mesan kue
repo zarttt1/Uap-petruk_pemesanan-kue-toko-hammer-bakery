@@ -1,0 +1,108 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+class Kue {
+public:
+    string nama;
+    double harga;
+    int ukuran; // 1 = kecil, 2 = sedang, 3 = besar
+    string rasa;
+    int isian; // 1 = sedikit, 2 = banyak
+
+    Kue(string nama, double harga, int ukuran, string rasa, int isian) {
+        this->nama = nama;
+        this->harga = harga;
+        this->ukuran = ukuran;
+        this->rasa = rasa;
+        this->isian = isian;
+    }
+};
+
+int main() {
+    vector<Kue> kue = {
+        Kue("Kue Pisang", 20.00, 2, "Pisang", 2),
+        Kue("Kue Mentega", 25.00, 2, "Mentega", 2),
+        Kue("Kue Vanili", 30.00, 2, "Vanili", 2),
+        //...
+    };
+
+    vector<Kue> pesanan;
+
+    int pilihan;
+    cout << "Selamat datang di Hammer Bakery!" << endl;
+    cout << "Silakan pilih kue yang Anda inginkan: " << endl;
+    for (int i = 0; i < kue.size(); i++) {
+        cout << (i + 1) << ". " << kue[i].nama << " - " << kue[i].harga << endl;
+    }
+
+    while (true) {
+        cin >> pilihan;
+        Kue kuePilihan = kue[pilihan - 1];
+
+        cout << "Anda memilih: " << kuePilihan.nama << endl;
+        cout << "Silakan pilih ukuran: " << endl;
+        cout << "1. Kecil" << endl;
+        cout << "2. Sedang" << endl;
+        cout << "3. Besar" << endl;
+
+        int ukuran;
+        cin >> ukuran;
+        kuePilihan.ukuran = ukuran;
+
+        cout << "Silakan pilih isian: " << endl;
+        cout << "1. Sedikit" << endl;
+        cout << "2. Banyak" << endl;
+
+        int isian;
+        cin >> isian;
+        kuePilihan.isian = isian;
+
+        pesanan.push_back(kuePilihan);
+
+        char lagi;
+        cout << "Ingin memesan lagi? (y/n): ";
+        cin >> lagi;
+        if (lagi == 'n') {
+            break;
+        }
+    }
+
+    double totalHarga = 0;
+    for (int i = 0; i < pesanan.size(); i++) {
+    totalHarga += pesanan[i].harga;
+}
+cout << "Total Harga: " << totalHarga << endl;
+    cout << "Rincian Pembelian:" << endl;
+    for (int i = 0; i < pesanan.size(); i++) {
+        cout << (i + 1) << ". " << pesanan[i].nama << " - Ukuran: ";
+        if (pesanan[i].ukuran == 1) {
+            cout << "Kecil";
+        } else if (pesanan[i].ukuran == 2) {
+            cout << "Sedang";
+        } else {
+            cout << "Besar";
+        }
+        cout << ", Isian: ";
+        if (pesanan[i].isian == 1) {
+            cout << "Sedikit";
+        } else {
+            cout << "Banyak";
+        }
+        cout << endl;
+        
+    }
+
+    char konfirmasi;
+    cout << "Konfirmasi Pembelian? (y/n): ";
+    cin >> konfirmasi;
+    if (konfirmasi == 'y') {
+        cout << "Pesanan Anda telah dikonfirmasi." << endl;
+    } else {
+        cout << "Pesanan dibatalkan." << endl;
+    }
+
+    return 0;
+}
