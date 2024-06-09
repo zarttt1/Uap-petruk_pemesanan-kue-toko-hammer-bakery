@@ -20,8 +20,12 @@ public:
 class Cake : public Item {
 public:
     string requestNama;
+    string rasa;
 
-    Cake(string nama, double harga, int ukuran) : Item(nama, harga, ukuran) {}
+    Cake(string nama, double harga, int ukuran, string rasa = "", string requestNama = "") : Item(nama, harga, ukuran) {
+        this->rasa = rasa;
+        this->requestNama = requestNama;
+    }
 };
 
 class Kue : public Item {
@@ -44,23 +48,20 @@ public:
 
 int main() {
     vector<Roti> roti = {
-        Roti("Roti Kecil", 5000, 1),
-        Roti("Roti Besar", 8000, 2),
+        Roti("Roti Kecil", 5.000, 1),
+        Roti("Roti Besar", 8.000, 2),
     };
 
     vector<Kue> kueBolu = {
-        Kue("Kue Bolu Kecil", 25000, 1),
-        Kue("Kue Bolu Sedang", 40000, 2),
-        Kue("Kue Bolu Besar", 50000, 3),
+        Kue("Kue Bolu Kecil", 25.000, 1),
+        Kue("Kue Bolu Sedang", 40.000, 2),
+        Kue("Kue Bolu Besar", 50.000, 3),
     };
 
     vector<Cake> birthdayCake = {
-        Cake("Birthday Cake Blackforest", 120000, 1),
-        Cake("Birthday Cake Blackforest", 200000, 2),
-        Cake("Birthday Cake Blackforest", 270000, 3),
-        Cake("Birthday Cake Vanilla", 120000, 1),
-        Cake("Birthday Cake Vanilla", 200000, 2),
-        Cake("Birthday Cake Vanilla", 270000, 3),
+        Cake("Birthday Cake Kecil", 120.000, 1),
+        Cake("Birthday Cake Sedang", 200.000, 2),
+        Cake("Birthday Cake Besar", 270.000, 3),
     };
 
     vector<Roti> pesananRoti;
@@ -127,24 +128,31 @@ int main() {
 
             pesananKueBolu.push_back(kueBoluPilihan);
         } else if (kategori == 3) {
-            cout << "Silakan pilih birthday cake yang Anda inginkan: " << endl;
+            cout << "Silakan pilih ukuran birthday cake yang Anda inginkan: " << endl;
             for (int i = 0; i < birthdayCake.size(); i++) {
-                cout << (i + 1) << ". " << birthdayCake[i].nama << " - " << birthdayCake[i].harga << " (Ukuran: ";
-                if (birthdayCake[i].ukuran == 1) {
-                    cout << "Kecil";
-                } else if (birthdayCake[i].ukuran == 2) {
-                    cout << "Sedang";
-                } else {
-                    cout << "Besar";
-                }
-                cout << ")" << endl;
+                cout << (i + 1) << ". " << birthdayCake[i].nama << " - " << birthdayCake[i].harga << endl;
             }
 
             int pilihan;
             cin >> pilihan;
             Cake cakePilihan = birthdayCake[pilihan - 1];
 
-            cout << "Masukkan nama yang ingin ditulis di atas cake: ";
+            cout << "Silakan pilih rasa birthday cake: " << endl;
+            cout << "1. Blackforest\n2. Vanilla\n3. Red Velvet\nPilihan: ";
+            int rasa;
+            cin >> rasa;
+            if (rasa == 1) {
+                cakePilihan.rasa = "Blackforest";
+            } else if (rasa == 2) {
+                cakePilihan.rasa = "Vanilla";
+            } else if (rasa == 3) {
+                cakePilihan.rasa = "Red Velvet";
+            } else {
+                cout << "Pilihan tidak valid." << endl;
+                continue;
+            }
+
+            cout << "Masukkan kata-kata yang akan ditulis di atas cake: ";
             cin.ignore(); // Mengabaikan karakter newline yang tersisa
             getline(cin, cakePilihan.requestNama);
 
@@ -192,7 +200,7 @@ int main() {
         cout << "Rincian Pembelian Cake:" << endl;
         for (int i = 0; i < pesananCake.size(); i++) {
             totalHarga += pesananCake[i].harga;
-            cout << (i + 1) << ". " << pesananCake[i].nama << " - Ukuran: ";
+            cout << (i + 1) << ". " << pesananCake[i].nama << " (Rasa: " << pesananCake[i].rasa << ") - Ukuran: ";
             if (pesananCake[i].ukuran == 1) {
                 cout << "Kecil";
             } else if (pesananCake[i].ukuran == 2) {
