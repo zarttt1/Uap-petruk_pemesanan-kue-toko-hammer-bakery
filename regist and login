@@ -1,0 +1,63 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Customer {
+private:
+    int id;
+    string name;
+    string password;
+    static int count;
+public:
+    Customer() {
+        id = ++count;
+    }
+
+    void signup() {
+        cout << "Enter your name: ";
+        cin >> name;
+        cout << "Enter a password (combination of int and char): ";
+        cin >> password;
+        cout << "Registration successful! Your ID is " << id << endl;
+        login();
+    }
+
+    void login() {
+        string inputPassword;
+        cout << "Enter your password: ";
+        cin >> inputPassword;
+
+        if (inputPassword == password) {
+            cout << "Login successful!\n";
+            
+        } else {
+            cout << "Invalid password\n";
+            login(); // retry login if password is invalid
+        }
+    }
+};
+
+int Customer::count = 0;
+
+int main() {
+    Customer customer;
+    while (true) {
+        cout << "1. Sign up\n2. Login\n3. Exit\n";
+        int choice;
+        cin >> choice;
+        switch (choice) {
+            case 1:
+                customer.signup();
+                break;
+            case 2:
+                customer.login();
+                break;
+            case 3:
+                return 0;
+            default:
+                cout << "Invalid choice\n";
+        }
+    }
+    return 0;
+}
