@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <list>
 #include <string>
 
 using namespace std;
@@ -46,6 +47,28 @@ public:
     }
 };
 
+// Function to use divide & conquer strategy for sum of prices
+double sumPrices(vector<Item*>& items, int start, int end) {
+    if (start > end) return 0;
+    if (start == end) return items[start]->harga;
+    int mid = start + (end - start) / 2;
+    return sumPrices(items, start, mid) + sumPrices(items, mid + 1, end);
+}
+
+char getValidYesNoInput(const string& prompt) {
+    char input;
+    while (true) {
+        cout << prompt;
+        cin >> input;
+        if (input == 'y' || input == 'Y' || input == 'n' || input == 'N') {
+            break;
+        } else {
+            cout << "Pilihan tidak valid. Silakan masukkan y/n "<<endl;
+        }
+    }
+    return input;
+}
+
 int main() {
     vector<Roti> roti = {
         Roti("Roti Kecil", 5.000, 1),
@@ -64,9 +87,9 @@ int main() {
         Cake("Birthday Cake Besar", 270.000, 3),
     };
 
-    vector<Roti> pesananRoti;
-    vector<Kue> pesananKueBolu;
-    vector<Cake> pesananCake;
+    list<Roti> pesananRoti;
+    list<Kue> pesananKueBolu;
+    list<Cake> pesananCake;
 
     cout << "Selamat datang di Hammer Bakery!" << endl;
 
@@ -162,62 +185,63 @@ int main() {
             continue;
         }
 
-        char lagi;
-        cout << "Ingin memesan lagi? (y/n): ";
-        cin >> lagi;
-        if (lagi == 'n') {
+        char lagi = getValidYesNoInput("Ingin memesan lagi? (y/n): ");
+        if (lagi == 'n' || lagi == 'N') {
             break;
         }
     }
 
     double totalHarga = 0;
 
+    vector<Item*> allItems;
+
     if (!pesananRoti.empty()) {
         cout << "Rincian Pembelian Roti:" << endl;
-        for (int i = 0; i < pesananRoti.size(); i++) {
-            totalHarga += pesananRoti[i].harga;
-            cout << (i + 1) << ". " << pesananRoti[i].nama << " (Isian: " << pesananRoti[i].isian << ") - Harga: " << pesananRoti[i].harga << endl;
+        for (auto& item : pesananRoti) {
+            totalHarga += item.harga;
+            cout << "- " << item.nama << " (Isian: " << item.isian << ") - Harga: " << item.harga << endl;
+            allItems.push_back(&item);
         }
     }
 
     if (!pesananKueBolu.empty()) {
         cout << "Rincian Pembelian Kue Bolu:" << endl;
-        for (int i = 0; i < pesananKueBolu.size(); i++) {
-            totalHarga += pesananKueBolu[i].harga;
-            cout << (i + 1) << ". " << pesananKueBolu[i].nama << " (Rasa: " << pesananKueBolu[i].rasa << ") - Ukuran: ";
-            if (pesananKueBolu[i].ukuran == 1) {
+        for (auto& item : pesananKueBolu) {
+            totalHarga += item.harga;
+            cout << "- " << item.nama << " (Rasa: " << item.rasa << ") - Ukuran: ";
+            if (item.ukuran == 1) {
                 cout << "Kecil";
-            } else if (pesananKueBolu[i].ukuran == 2) {
+            } else if (item.ukuran == 2) {
                 cout << "Sedang";
             } else {
                 cout << "Besar";
             }
-            cout << " - Harga: " << pesananKueBolu[i].harga << endl;
+            cout << " - Harga: " << item.harga << endl;
+            allItems.push_back(&item);
         }
     }
 
     if (!pesananCake.empty()) {
         cout << "Rincian Pembelian Cake:" << endl;
-        for (int i = 0; i < pesananCake.size(); i++) {
-            totalHarga += pesananCake[i].harga;
-            cout << (i + 1) << ". " << pesananCake[i].nama << " (Rasa: " << pesananCake[i].rasa << ") - Ukuran: ";
-            if (pesananCake[i].ukuran == 1) {
+        for (auto& item : pesananCake) {
+            totalHarga += item.harga;
+            cout << "- " << item.nama << " (Rasa: " << item.rasa << ") - Ukuran: ";
+            if (item.ukuran == 1) {
                 cout << "Kecil";
-            } else if (pesananCake[i].ukuran == 2) {
+            } else if (item.ukuran == 2) {
                 cout << "Sedang";
             } else {
                 cout << "Besar";
             }
-            cout << ", Nama di atas cake: " << pesananCake[i].requestNama << " - Harga: " << pesananCake[i].harga << endl;
+            cout << ", Nama di atas cake: " << item.requestNama << " - Harga: " << item.harga << endl;
+            allItems.push_back(&item);
         }
     }
 
     cout << "Total Harga: " << totalHarga << endl;
 
-    char konfirmasi;
-    cout << "Konfirmasi Pembelian? (y/n): ";
-    cin >> konfirmasi;
-    if (konfirmasi == 'y') {
+    char konfirmasi = getValidYesNoInput("Konfirmasi Pembelian? (y/n): ");
+    if (konfirmasi == 'y' || konfirmasi == 'Y') {
         cout << "Pesanan Anda telah dikonfirmasi." << endl;
     } else {
         cout << "Pesanan dibatalkan." << endl;
