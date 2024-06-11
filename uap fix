@@ -1,0 +1,314 @@
+#include <iostream>
+#include <vector>
+#include <list>
+#include <string>
+
+using namespace std;
+
+class Customer {
+private:
+    int id;
+    string name;
+    string password;
+    static int count;
+public:
+    Customer() {
+        id = ++count;
+    }
+
+    void signup() {
+        cout << "Masukan nama anda: ";
+        cin >> name;
+        cout << "Masukan password (kombinasi huruf dan angka): ";
+        cin >> password;
+        cout << "sign up berhasil! ID anda adalah " << id << endl;
+    }
+
+    bool login() {
+        string inputPassword;
+        cout << "Masukan Password: ";
+        cin >> inputPassword;
+
+        if (inputPassword == password) {
+            cout << "Login berhasil!\n";
+            return true;
+        } else {
+            cout << "Password salah\n";
+            return false;
+        }
+    }
+};
+
+int Customer::count = 0;
+
+class Item {
+public:
+    string nama;
+    double harga;
+    int ukuran;
+
+    Item(string nama, double harga, int ukuran) {
+        this->nama = nama;
+        this->harga = harga;
+        this->ukuran = ukuran;
+    }
+};
+
+class Cake : public Item {
+public:
+    string requestNama;
+    string rasa;
+
+    Cake(string nama, double harga, int ukuran, string rasa = "", string requestNama = "") : Item(nama, harga, ukuran) {
+        this->rasa = rasa;
+        this->requestNama = requestNama;
+    }
+};
+
+class Kue : public Item {
+public:
+    string rasa;
+
+    Kue(string nama, double harga, int ukuran, string rasa = "") : Item(nama, harga, ukuran) {
+        this->rasa = rasa;
+    }
+};
+
+class Roti : public Item {
+public:
+    string isian;
+
+    Roti(string nama, double harga, int ukuran, string isian = "") : Item(nama, harga, ukuran) {
+        this->isian = isian;
+    }
+};
+
+
+double sumPrices(vector<Item*>& items, int start, int end) {
+    if (start > end) return 0;
+    if (start == end) return items[start]->harga;
+    int mid = start + (end - start) / 2;
+    return sumPrices(items, start, mid) + sumPrices(items, mid + 1, end);
+}
+
+char getValidYesNoInput(const string& prompt) {
+    char input;
+    while (true) {
+        cout << prompt;
+        cin >> input;
+        if (input == 'y' || input == 'Y' || input == 'n' || input == 'N') {
+            break;
+        } else {
+            cout << "Pilihan tidak valid. Silakan masukkan y/n "<<endl;
+        }
+    }
+    return input;
+}
+
+int main() {
+    vector<Customer> customers;
+    bool authenticated = false;
+    Customer currentCustomer;
+
+    while (!authenticated) {
+        cout << "1. Sign up\n2. Login\n3. Exit\n";
+        int choice;
+        cin >> choice;
+        switch (choice) {
+            case 1:
+                currentCustomer.signup();
+                customers.push_back(currentCustomer);
+                authenticated = true;
+                break;
+            case 2:
+                if (currentCustomer.login()) {
+                    authenticated = true;
+                }
+                break;
+            case 3:
+                return 0;
+            default:
+                cout << "Invalid choice\n";
+        }
+    }
+    
+    vector<Roti> roti = {
+        Roti("Roti Kecil", 5000, 1),
+        Roti("Roti Besar", 8000, 2),
+    };
+
+    vector<Kue> kueBolu = {
+        Kue("Kue Bolu Kecil", 25000, 1),
+        Kue("Kue Bolu Sedang", 40000, 2),
+        Kue("Kue Bolu Besar", 50000, 3),
+    };
+
+    vector<Cake> birthdayCake = {
+        Cake("Birthday Cake Kecil", 120000, 1),
+        Cake("Birthday Cake Sedang", 200000, 2),
+        Cake("Birthday Cake Besar", 270000, 3),
+    };
+
+    list<Roti> pesananRoti;
+    list<Kue> pesananKueBolu;
+    list<Cake> pesananCake;
+
+    cout << "Selamat datang di Hammer Bakery!" << endl;
+
+    while (true) {
+        int kategori;
+        cout << "Pilih kategori:\n1. Roti\n2. Kue Bolu\n3. Birthday Cake\nPilihan: ";
+        cin >> kategori;
+
+        if (kategori == 1) {
+            cout << "Silakan pilih ukuran roti yang Anda inginkan: " << endl;
+            for (int i = 0; i < roti.size(); i++) {
+                cout << (i + 1) << ". " << roti[i].nama << " - " << roti[i].harga << endl;
+            }
+
+            int pilihan;
+            cin >> pilihan;
+            Roti rotiPilihan = roti[pilihan - 1];
+
+            cout << "Silakan pilih isian roti: " << endl;
+            cout << "1. Coklat\n2. Vanilla\n3. Pisang Coklat\nPilihan: ";
+            int isian;
+            cin >> isian;
+            if (isian == 1) {
+                rotiPilihan.isian = "Coklat";
+            } else if (isian == 2) {
+                rotiPilihan.isian = "Vanilla";
+            } else if (isian == 3) {
+                rotiPilihan.isian = "Pisang Coklat";
+            } else {
+                cout << "Pilihan tidak valid." << endl;
+                continue;
+            }
+
+            pesananRoti.push_back(rotiPilihan);
+        } else if (kategori == 2) {
+            cout << "Silakan pilih ukuran kue bolu yang Anda inginkan: " << endl;
+            for (int i = 0; i < kueBolu.size(); i++) {
+                cout << (i + 1) << ". " << kueBolu[i].nama << " - " << kueBolu[i].harga << endl;
+            }
+
+            int pilihan;
+            cin >> pilihan;
+            Kue kueBoluPilihan = kueBolu[pilihan - 1];
+
+            cout << "Silakan pilih rasa kue bolu: " << endl;
+            cout << "1. Coklat\n2. Surabaya\n3. Pisang\nPilihan: ";
+            int rasa;
+            cin >> rasa;
+            if (rasa == 1) {
+                kueBoluPilihan.rasa = "Coklat";
+            } else if (rasa == 2) {
+                kueBoluPilihan.rasa = "Surabaya";
+            } else if (rasa == 3) {
+                kueBoluPilihan.rasa = "Pisang";
+            } else {
+                cout << "Pilihan tidak valid." << endl;
+                continue;
+            }
+
+            pesananKueBolu.push_back(kueBoluPilihan);
+        } else if (kategori == 3) {
+            cout << "Silakan pilih ukuran birthday cake yang Anda inginkan: " << endl;
+            for (int i = 0; i < birthdayCake.size(); i++) {
+                cout << (i + 1) << ". " << birthdayCake[i].nama << " - " << birthdayCake[i].harga << endl;
+            }
+
+            int pilihan;
+            cin >> pilihan;
+            Cake cakePilihan = birthdayCake[pilihan - 1];
+
+            cout << "Silakan pilih rasa birthday cake: " << endl;
+            cout << "1. Blackforest\n2. Vanilla\n3. Red Velvet\nPilihan: ";
+            int rasa;
+            cin >> rasa;
+            if (rasa == 1) {
+                cakePilihan.rasa = "Blackforest";
+            } else if (rasa == 2) {
+                cakePilihan.rasa = "Vanilla";
+            } else if (rasa == 3) {
+                cakePilihan.rasa = "Red Velvet";
+            } else {
+                cout << "Pilihan tidak valid." << endl;
+                continue;
+            }
+
+            cout << "Masukkan kata-kata yang akan ditulis di atas cake: ";
+            cin.ignore();
+            getline(cin, cakePilihan.requestNama);
+
+            pesananCake.push_back(cakePilihan);
+        } else {
+            cout << "Pilihan tidak valid." << endl;
+            continue;
+        }
+
+        char lagi = getValidYesNoInput("Ingin memesan lagi? (y/n): ");
+        if (lagi == 'n' || lagi == 'N') {
+            break;
+        }
+    }
+
+    double totalHarga = 0;
+
+    vector<Item*> allItems;
+
+    if (!pesananRoti.empty()) {
+        cout << "Rincian Pembelian Roti:" << endl;
+        for (auto& item : pesananRoti) {
+            totalHarga += item.harga;
+            cout << "- " << item.nama << " (Isian: " << item.isian << ") - Harga: " << item.harga << endl;
+            allItems.push_back(&item);
+        }
+    }
+
+    if (!pesananKueBolu.empty()) {
+        cout << "Rincian Pembelian Kue Bolu:" << endl;
+        for (auto& item : pesananKueBolu) {
+            totalHarga += item.harga;
+            cout << "- " << item.nama << " (Rasa: " << item.rasa << ") - Ukuran: ";
+            if (item.ukuran == 1) {
+                cout << "Kecil";
+            } else if (item.ukuran == 2) {
+            cout << "Sedang";
+            } else {
+                cout << "Besar";
+            }
+            cout << " - Harga: " << item.harga << endl;
+            allItems.push_back(&item);
+        }
+    }
+
+    if (!pesananCake.empty()) {
+        cout << "Rincian Pembelian Cake:" << endl;
+        for (auto& item : pesananCake) {
+            totalHarga += item.harga;
+            cout << "- " << item.nama << " (Rasa: " << item.rasa << ") - Ukuran: ";
+            if (item.ukuran == 1) {
+                cout << "Kecil";
+            } else if (item.ukuran == 2) {
+                cout << "Sedang";
+            } else {
+                cout << "Besar";
+            }
+            cout << ", Nama di atas cake: " << item.requestNama << " - Harga: " << item.harga << endl;
+            allItems.push_back(&item);
+        }
+    }
+
+    double finalTotal = sumPrices(allItems, 0, allItems.size() - 1);
+    cout << "Total Harga: " << finalTotal << endl;
+
+    char konfirmasi = getValidYesNoInput("Konfirmasi Pembelian? (y/n): ");
+    if (konfirmasi == 'y' || konfirmasi == 'Y') {
+        cout << "Pesanan Anda telah dikonfirmasi." << endl;
+    } else {
+        cout << "Pesanan dibatalkan." << endl;
+    }
+
+    return 0;
+}
